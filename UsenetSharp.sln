@@ -1,0 +1,22 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UsenetSharp", "UsenetSharp\UsenetSharp.csproj", "{683B2BDA-7A18-4F24-AC9E-4E63ABE6861F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UsenetSharpTest", "UsenetSharpTest\UsenetSharpTest.csproj", "{9F2AACA7-8653-45AB-837C-B65A921EC2A2}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{683B2BDA-7A18-4F24-AC9E-4E63ABE6861F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{683B2BDA-7A18-4F24-AC9E-4E63ABE6861F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{683B2BDA-7A18-4F24-AC9E-4E63ABE6861F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{683B2BDA-7A18-4F24-AC9E-4E63ABE6861F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9F2AACA7-8653-45AB-837C-B65A921EC2A2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9F2AACA7-8653-45AB-837C-B65A921EC2A2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9F2AACA7-8653-45AB-837C-B65A921EC2A2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9F2AACA7-8653-45AB-837C-B65A921EC2A2}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
