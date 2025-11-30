@@ -1,5 +1,4 @@
 using UsenetSharp.Clients;
-using UsenetSharp.Exceptions;
 
 namespace UsenetSharpTest.Clients;
 
