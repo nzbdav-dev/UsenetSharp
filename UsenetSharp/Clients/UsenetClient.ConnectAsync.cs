@@ -2,6 +2,7 @@ using System.Net.Security;
 using System.Net.Sockets;
 using System.Text;
 using UsenetSharp.Exceptions;
+using UsenetSharp.Models;
 
 namespace UsenetSharp.Clients;
 
@@ -36,7 +37,8 @@ public partial class UsenetClient
             var responseCode = ParseResponseCode(response);
 
             // NNTP servers typically respond with "200" or "201" for successful connection
-            if (responseCode != 200 && responseCode != 201)
+            if (responseCode != (int)UsenetResponseType.ServerReadyPostingAllowed &&
+                responseCode != (int)UsenetResponseType.ServerReadyNoPostingAllowed)
                 throw new UsenetConnectionException(response!) { ResponseCode = responseCode };
         }
         finally

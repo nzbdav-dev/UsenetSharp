@@ -21,7 +21,7 @@ public partial class UsenetClient
             {
                 ResponseCode = responseCode,
                 ResponseMessage = response!,
-                ArticleExists = responseCode == 223,
+                ArticleExists = responseCode == (int)UsenetResponseType.ArticleExists,
             };
         }
         finally

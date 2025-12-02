@@ -21,7 +21,7 @@ public partial class UsenetClient
             {
                 ResponseCode = responseCode,
                 ResponseMessage = response!,
-                DateTime = responseCode == 111
+                DateTime = responseCode == (int)UsenetResponseType.DateAndTime
                     ? ParseNntpDateTime(response!)
                     : null
             };

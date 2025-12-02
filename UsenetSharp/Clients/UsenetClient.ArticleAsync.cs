@@ -33,7 +33,7 @@ public partial class UsenetClient
             var responseCode = ParseResponseCode(response);
 
             // Article retrieved - head and body follow
-            if (responseCode == 220)
+            if (responseCode == (int)UsenetResponseType.ArticleRetrievedHeadAndBodyFollow)
             {
                 // Parse headers
                 var headers = await ParseArticleHeadersAsync(_cts.Token);

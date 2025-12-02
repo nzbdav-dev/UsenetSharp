@@ -33,7 +33,7 @@ public partial class UsenetClient
             var responseCode = ParseResponseCode(response);
 
             // Article retrieved - body follows
-            if (responseCode == 222)
+            if (responseCode == (int)UsenetResponseType.ArticleRetrievedBodyFollows)
             {
                 // Create a pipe for streaming the body data
                 var pipe = new Pipe(new PipeOptions(

@@ -17,8 +17,8 @@ public partial class UsenetClient
             var userResponse = await _reader!.ReadLineAsync(_cts.Token);
             var userResponseCode = ParseResponseCode(userResponse);
 
-            // Response 381 means "Password required"
-            if (userResponseCode == 381)
+            // Password required
+            if (userResponseCode == (int)UsenetResponseType.PasswordRequired)
             {
                 // Send AUTHINFO PASS command
                 await _writer.WriteLineAsync($"AUTHINFO PASS {pass}".AsMemory(), _cts.Token);

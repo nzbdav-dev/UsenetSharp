@@ -3,10 +3,12 @@
 public enum UsenetResponseType
 {
     Unknown = 0,
+    DateAndTime = 111,
     ServerReadyPostingAllowed = 200,
     ServerReadyNoPostingAllowed = 201,
     ArticleRetrievedHeadAndBodyFollow = 220,
-    ArticleRetrievedBodyFollow = 222,
+    ArticleRetrievedHeadFollows = 221,
+    ArticleRetrievedBodyFollows = 222,
     ArticleExists = 223,
     AuthenticationAccepted = 281,
     PasswordRequired = 381,

@@ -18,8 +18,8 @@ public partial class UsenetClient
             var response = await _reader!.ReadLineAsync(_cts.Token);
             var responseCode = ParseResponseCode(response);
 
-            // Headers retrieved - headers follow (multi-line)
-            if (responseCode == 221)
+            // Article retrieved - head follows (multi-line)
+            if (responseCode == (int)UsenetResponseType.ArticleRetrievedHeadFollows)
             {
                 // Parse headers
                 var headers = await ParseArticleHeadersAsync(_cts.Token);
