@@ -1,5 +1,6 @@
 using UsenetSharp.Clients;
 using UsenetSharp.Exceptions;
+using UsenetSharp.Models;
 
 namespace UsenetSharpTest.Clients;
 
@@ -311,7 +312,7 @@ public class UsenetClientArticleAsyncTests
         await client.AuthenticateAsync(Credentials.Username, Credentials.Password, cancellationToken);
 
         var callbackInvoked = false;
-        Action onConnectionReadyAgain = () => { callbackInvoked = true; };
+        Action<ArticleBodyResult> onConnectionReadyAgain = _ => { callbackInvoked = true; };
 
         // Act
         var segmentId = "8mthBMhpfyOJFM7OPe2RsZhm@CAtZlPkA1OiI.WLo";
@@ -343,7 +344,7 @@ public class UsenetClientArticleAsyncTests
         await client.AuthenticateAsync(Credentials.Username, Credentials.Password, cancellationToken);
 
         var callbackInvoked = false;
-        Action onConnectionReadyAgain = () => { callbackInvoked = true; };
+        Action<ArticleBodyResult> onConnectionReadyAgain = _ => { callbackInvoked = true; };
 
         // Act - Try to get an invalid segment
         var invalidSegmentId = "invalid-segment-id-does-not-exist@test.com";

@@ -15,11 +15,20 @@ public partial class UsenetClient
     public async Task<UsenetBodyResponse> BodyAsync
     (
         SegmentId segmentId,
-        Action? onConnectionReadyAgain,
+        Action<ArticleBodyResult>? onConnectionReadyAgain,
         CancellationToken cancellationToken
     )
     {
-        await _commandLock.WaitAsync(cancellationToken);
+        try
+        {
+            await _commandLock.WaitAsync(cancellationToken);
+        }
+        catch
+        {
+            onConnectionReadyAgain?.Invoke(ArticleBodyResult.NotRetrieved);
+            throw;
+        }
+
         var isReadBodyToPipeAsyncStarted = false;
 
         try
@@ -47,7 +56,7 @@ public partial class UsenetClient
                 {
                     pipe.Writer.Complete();
                     _commandLock.Release();
-                    onConnectionReadyAgain?.Invoke();
+                    onConnectionReadyAgain?.Invoke(ArticleBodyResult.Retrieved);
                 });
 
                 // Return immediately with the stream and headers
@@ -73,7 +82,7 @@ public partial class UsenetClient
             if (!isReadBodyToPipeAsyncStarted)
             {
                 _commandLock.Release();
-                onConnectionReadyAgain?.Invoke();
+                onConnectionReadyAgain?.Invoke(ArticleBodyResult.NotRetrieved);
             }
         }
     }
