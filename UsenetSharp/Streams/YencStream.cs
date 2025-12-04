@@ -60,7 +60,7 @@ public class YencStream : FastReadOnlyNonSeekableStream
     /// <summary>
     /// Gets the yEnc headers from the stream. If headers haven't been read yet, reads and parses them asynchronously.
     /// </summary>
-    public async ValueTask<UsenetYencHeader?> GetYencHeadersAsync(CancellationToken cancellationToken = default)
+    public virtual async ValueTask<UsenetYencHeader?> GetYencHeadersAsync(CancellationToken cancellationToken = default)
     {
         if (!_headersRead)
         {

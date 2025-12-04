@@ -7,7 +7,7 @@
 
         <!-- Package Information -->
         <PackageId>UsenetSharp</PackageId>
-        <Version>1.0.2</Version>
+        <Version>1.0.3</Version>
         <Authors>UsenetSharp Contributors</Authors>
         <Description>A high-performance .NET library for Usenet NNTP protocol with yEnc support</Description>
         <PackageTags>usenet;nntp;yenc</PackageTags>
