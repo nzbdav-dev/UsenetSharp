@@ -124,7 +124,8 @@ public class YencStream : FastReadOnlyNonSeekableStream
                 if (remainingBufferSpace >= DecodeBufferSize)
                 {
                     // Decode directly to caller's buffer - ZERO COPY!
-                    int decodedLength = YencDecoder.DecodeEx(lineSpan, buffer.Span.Slice(totalRead), ref _decoderState, isRaw: false);
+                    int decodedLength = YencDecoder.DecodeEx(
+                        lineSpan, buffer.Span.Slice(totalRead), ref _decoderState, isRaw: false);
                     totalRead += decodedLength;
                 }
                 else
@@ -229,14 +230,22 @@ public class YencStream : FastReadOnlyNonSeekableStream
         string? ybeginLine = null;
         string? ypartLine = null;
 
-        // Read lines until we find =ybegin
+        // Read lines until we find =ybegin (skip empty lines that may appear before it)
         while (true)
         {
             var lineMemory = await ReadNextLineAsync(cancellationToken);
 
             if (lineMemory.Length == 0)
             {
-                throw new InvalidDataException("Reached end of stream without finding =ybegin header");
+                // Distinguish between empty line and EOF
+                // If buffer is exhausted (length is 0), we've hit EOF
+                if (_readBufferLength == 0)
+                {
+                    throw new InvalidDataException("Reached end of stream without finding =ybegin header");
+                }
+
+                // Empty line - skip it
+                continue;
             }
 
             var lineSpan = lineMemory.Span;
@@ -282,12 +291,14 @@ public class YencStream : FastReadOnlyNonSeekableStream
     private static UsenetYencHeader ParseYencHeaders(string ybeginLine, string? ypartLine)
     {
         // Parse =ybegin line
-        // Format: =ybegin line=128 size=123456 name=filename.bin
+        // Format: =ybegin part=123 total=123 line=123 size=123 name=filename.bin
         var ybeginParts = ybeginLine.Split(' ', StringSplitOptions.RemoveEmptyEntries);
 
         int lineLength = 128; // default
         long fileSize = 0;
         string fileName = string.Empty;
+        int partNumber = 0;
+        int totalParts = 0;
 
         foreach (var part in ybeginParts.Skip(1)) // Skip "=ybegin"
         {
@@ -308,14 +319,18 @@ public class YencStream : FastReadOnlyNonSeekableStream
                     case "name":
                         fileName = value;
                         break;
+                    case "part":
+                        int.TryParse(value, out partNumber);
+                        break;
+                    case "total":
+                        int.TryParse(value, out totalParts);
+                        break;
                 }
             }
         }
 
         // Parse =ypart line if present
         // Format: =ypart begin=1 end=123456
-        int partNumber = 0;
-        int totalParts = 0;
         long partSize = fileSize;
         long partOffset = 0;
 
@@ -347,8 +362,6 @@ public class YencStream : FastReadOnlyNonSeekableStream
 
             partOffset = partBegin - 1; // yEnc uses 1-based indexing
             partSize = partEnd - partBegin + 1;
-            partNumber = 1; // We don't have part number in headers, assume 1 for now
-            totalParts = 1; // We don't have total parts in headers
         }
 
         return new UsenetYencHeader
