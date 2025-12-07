@@ -21,10 +21,36 @@ public partial class UsenetClient
 
             if (useSsl)
             {
-                var sslStream = new SslStream(_stream, false);
+                var sslStream = new SslStream(_stream, false, (sender, certificate, chain, sslPolicyErrors) =>
+                {
+                    // ENV vars control SSL behavior
+                    var ignoreNameMismatch = Environment.GetEnvironmentVariable("TLS_IGNORE_NAME_MISMATCH");
+                    var ignoreDomains = Environment.GetEnvironmentVariable("TLS_IGNORE_CERT_DOMAINS");
+
+                    // Ignore server name mismatch globally if requested
+                    if (!string.IsNullOrWhiteSpace(ignoreNameMismatch) &&
+                        (ignoreNameMismatch == "1" || ignoreNameMismatch.Equals("true", StringComparison.OrdinalIgnoreCase)))
+                    {
+                        sslPolicyErrors &= ~SslPolicyErrors.RemoteCertificateNameMismatch;
+                    }
+
+                    // Ignore cert errors for specific domains
+                    if (!string.IsNullOrWhiteSpace(ignoreDomains))
+                    {
+                        var domains = ignoreDomains.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+                        if (domains.Contains(host, StringComparer.OrdinalIgnoreCase))
+                        {
+                            return true; // bypass all TLS errors for this host
+                        }
+                    }
+
+                    return sslPolicyErrors == SslPolicyErrors.None;
+                });
+
                 await sslStream.AuthenticateAsClientAsync(host, null,
                     System.Security.Authentication.SslProtocols.Tls12 |
                     System.Security.Authentication.SslProtocols.Tls13, true);
+
                 _stream = sslStream;
             }
 
@@ -33,13 +59,15 @@ public partial class UsenetClient
             _writer = new StreamWriter(_stream, Encoding.Latin1) { AutoFlush = true };
 
             // Read the server response
-            var response = await _reader.ReadLineAsync(_cts.Token);
+            var response = await _reader.ReadLineAsync(cancellationToken);
             var responseCode = ParseResponseCode(response);
 
             // NNTP servers typically respond with "200" or "201" for successful connection
             if (responseCode != (int)UsenetResponseType.ServerReadyPostingAllowed &&
                 responseCode != (int)UsenetResponseType.ServerReadyNoPostingAllowed)
+            {
                 throw new UsenetConnectionException(response!) { ResponseCode = responseCode };
+            }
         }
         finally
         {
