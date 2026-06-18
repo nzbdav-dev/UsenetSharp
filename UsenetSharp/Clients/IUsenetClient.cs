@@ -13,6 +13,9 @@ public interface IUsenetClient
     Task<UsenetStatResponse> StatAsync(
         SegmentId segmentId, CancellationToken cancellationToken);
 
+    Task<IReadOnlyList<UsenetStatResponse>> StatPipelinedAsync(
+        IReadOnlyList<SegmentId> segmentIds, CancellationToken cancellationToken);
+
     Task<UsenetHeadResponse> HeadAsync(
         SegmentId segmentId, CancellationToken cancellationToken);
 
