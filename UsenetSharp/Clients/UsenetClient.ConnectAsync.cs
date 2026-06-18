@@ -16,6 +16,10 @@ public partial class UsenetClient
         try
         {
             _tcpClient = new TcpClient();
+            // Disable Nagle's algorithm. NNTP commands are small and latency-sensitive; with Nagle
+            // on, pipelined commands written back-to-back stall waiting for delayed ACKs, which makes
+            // pipelined STAT batches dramatically slower than sending each command immediately.
+            _tcpClient.NoDelay = true;
             await _tcpClient.ConnectAsync(host, port, cancellationToken);
             _stream = _tcpClient.GetStream();
 
